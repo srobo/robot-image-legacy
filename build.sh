@@ -22,8 +22,7 @@ while true; do
     (-o)
       IMAGE_OUTPUT_PATH=$(readlink -f "$2"); shift 2;;
     (-v)
-      # TODO: This currently seems to cause the script to crash
-      ((VERBOSE++)); shift;;
+      ((++VERBOSE)); shift;;
     (--) shift; break;;
     (*) exit 1;
   esac
