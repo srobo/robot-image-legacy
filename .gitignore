@@ -1,0 +1,7 @@
+mnt/
+out.img
+.cache/
+.idea/
+
+# macOS
+.DS_Store
