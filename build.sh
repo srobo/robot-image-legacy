@@ -25,7 +25,7 @@ while true; do
     (-v)
       ((++VERBOSE)); shift;;
     (--) shift; break;;
-    (*) echo "Invalid argument: $1"; exit 1;
+    (?) echo "Invalid argument: $1"; exit 1;
   esac
 done
 
@@ -62,6 +62,24 @@ stage_banner 0
 
 # Stage 1
 stage_banner 1
+
+# Download arch-install-scripts if they're not available
+if ! hash arch-chroot 2>/dev/null; then
+  echo "arch-chroot not found"
+  if [ ! -d "${CACHE_DIR}/arch-install-scripts" ]; then
+    echo "downloading arch-chroot..."
+    # very messy, I know
+    mkdir -p "${CACHE_DIR}/arch-install-scripts"
+    curl -Lo "${CACHE_DIR}/arch-install-scripts.tar.zst" https://archlinux.org/packages/extra/any/arch-install-scripts/download/
+    zstd -d "${CACHE_DIR}/arch-install-scripts.tar.zst"
+    cd "${CACHE_DIR}/arch-install-scripts"
+    tar -xf ../arch-install-scripts.tar
+    cd ../..
+  fi
+
+  export PATH="${CACHE_DIR}/arch-install-scripts/usr/bin:$PATH"
+fi
+
 cp -r stage1 "$BUILD_DIR/stage1"
 arch-chroot "$BUILD_DIR" "/stage1/00-init.sh"
 rm -rf "$BUILD_DIR/stage1"
