@@ -1,38 +1,46 @@
 #!/bin/bash
-info "Creating disk image"
-fallocate -l 8G out.img
+set -e
+
+if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
+  info "Creating disk image"
+  fallocate -l "$IMAGE_OUTPUT_SIZE" "$IMAGE_OUTPUT_PATH"
+else
+  info "Zeroing the beginning of the SD card"
+  dd if=/dev/zero of="$OUTPUT_DEVICE" bs=1M count=8
+fi
 
 info "Partitioning disk image"
 (
-  echo g # create a new GPT partition table
+  echo o # create a new MS-DOS partition table
 
-  # ESP
-  echo n # new partition
-  echo 1 # partition number
-  echo   # first sector (accept default)
-  echo +300M # last sector
-  echo t # change partition type
-  echo 1 # EFI System
-
-  echo n # new partition
-  echo 2 # partition number
-  echo   # first sector (accept default)
-  echo   # last sector (accept default)
+  # TODO: Separate boot partition
   # TODO: Secondary system partition for AB
+
+  # Boot partition
+  echo n # new partition
+  echo p # primary partition
+  echo 1 # partition number
+  echo 4096 # first sector
+  echo  # last sector (accept default)
 
   echo w # write changes
 ) | /sbin/fdisk "$IMAGE_OUTPUT_PATH" > /dev/null
 
-info "Setting up loop device"
-sudo losetup -P "$LOOP_DEV" out.img
 
-info "Creating f2fs root filesystem"
-mkfs.f2fs "${LOOP_DEV}p2"
+if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
+  info "Setting up loop device"
+  losetup -P "$OUTPUT_DEVICE" "$IMAGE_OUTPUT_PATH"
+  rootfs_part="${OUTPUT_DEVICE}p1"
+else
+  rootfs_part="${OUTPUT_DEVICE}1"
+fi
+
+info "Creating root filesystem"
+mkfs.ext4 "$rootfs_part"
 
 if [ ! -d "mnt" ]; then
-  mkdir mnt
+  mkdir "$BUILD_DIR"
 fi
 
 info "Mounting root partition"
-sudo mount -t f2fs -o rw,defaults "${LOOP_DEV}p2" mnt
-
+mount -t ext4 -o rw,defaults,noatime "$rootfs_part" "$BUILD_DIR"
