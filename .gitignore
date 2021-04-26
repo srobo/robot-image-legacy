@@ -1,6 +1,6 @@
 mnt/
-out.img
-.cache/
+*.img
+cache/
 .idea/
 
 # macOS
