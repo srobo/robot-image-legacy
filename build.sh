@@ -82,4 +82,5 @@ fi
 
 cp -r stage1 "$BUILD_DIR/stage1"
 arch-chroot "$BUILD_DIR" "/stage1/00-init.sh"
+arch-chroot "$BUILD_DIR" "/stage1/10-systemd.sh"
 rm -rf "$BUILD_DIR/stage1"
