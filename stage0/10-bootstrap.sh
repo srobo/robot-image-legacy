@@ -1,16 +1,10 @@
 #!/bin/bash
 set -e
 
-# TODO: This could be replaced with a pacstrap
-ROOTFS_TARBALL_PATH="$CACHE_DIR/alarm-rootfs-$PLATFORM.tar.gz"
-
-if [ ! -f "$ROOTFS_TARBALL_PATH" ]; then
-	info "Downloading Arch Linux ARM rootfs for" "$PLATFORM"
-	curl -Lo "$ROOTFS_TARBALL_PATH" "http://os.archlinuxarm.org/os/ArchLinuxARM-$PLATFORM-latest.tar.gz"
-fi
-
-info "Extracting" "ArchLinuxARM base filesystem"
-bsdtar -xpf "$ROOTFS_TARBALL_PATH" -C "$BUILD_DIR"
+export CARCH=armv7l
+info "Bootstrapping" "Arch Linux ARM"
+# Reads in common and platform packages and runs pacstrap with them
+cat stage0/packages{,-"$PLATFORM"} | xargs pacstrap -MGC stage0/pacman.conf "$BUILD_DIR"
 
 info "Flashing" "U-Boot"
 cd "$BUILD_DIR/boot"
