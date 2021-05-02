@@ -4,7 +4,7 @@ set -e
 export CARCH=armv7l
 info "Bootstrapping" "Arch Linux ARM"
 # Reads in common and platform packages and runs pacstrap with them
-cat stage0/packages{,-"$PLATFORM"} | xargs pacstrap -MGC stage0/pacman.conf "$BUILD_DIR"
+cat stage0/packages{,-"$PLATFORM"} | xargs pacstrap -cMGC stage0/pacman.conf "$BUILD_DIR"
 
 info "Flashing" "U-Boot"
 cd "$BUILD_DIR/boot"
