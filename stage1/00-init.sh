@@ -13,3 +13,7 @@ pacman-key --populate archlinuxarm
 
 info "Updating system"
 pacman -Syu --noconfirm
+
+info "Setting up user accounts"
+useradd -mp $(openssl passwd -crypt tobor) robot
+echo 'root:toor' | chpasswd
