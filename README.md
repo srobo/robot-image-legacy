@@ -11,7 +11,7 @@ Scripts used to create a system image for SR brain board SD cards.
 - curl
 - fdisk
 - [arch-install-scripts](https://archlinux.org/packages/extra/any/arch-install-scripts/)
-- [archlinuxarm-keyring (AUR)](https://aur.archlinux.org/packages/archlinuxarm-keyring/)
+- [archlinuxarm-keyring](http://mirror.archlinuxarm.org/armv6h/core/archlinuxarm-keyring-20140119-1-any.pkg.tar.xz)
 
 You will also need to be running a system which is either running on an ARM platform (armv7 or newer) or have `binfmt_misc` set up on your system. 
 

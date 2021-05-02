@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script is to be run within a chroot of the target rootfs
 function info {
   printf "\e[1m\e[96m%s \e[0m%s\n" "$1" "$2";
 }
@@ -15,5 +16,6 @@ info "Updating system"
 pacman -Syu --noconfirm
 
 info "Setting up user accounts"
-useradd -mp $(openssl passwd -crypt tobor) robot
+useradd -m robot
 echo 'root:toor' | chpasswd
+echo 'robot:tobor' | chpasswd
