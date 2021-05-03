@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source ./util.sh
+
 if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
   info "Creating disk image"
   fallocate -l "$IMAGE_OUTPUT_SIZE" "$IMAGE_OUTPUT_PATH"

@@ -18,3 +18,15 @@ You will also need to be running a system which is either running on an ARM plat
 You can do this on arch by installing the [qemu-user-static-bin AUR package](https://aur.archlinux.org/packages/qemu-user-static-bin/)
 
 If you would like to run this under Docker, you can do so using [multiarch/qemu-user-static](https://github.com/multiarch/qemu-user-static).
+
+## Stages
+
+Files:
+
+00-run.sh
+00-run-chroot.sh
+00-packages
+
+- Stage 0 - Build working ALARM system for device
+- Stage 1 - Minimal SR Kit Software
+- Stage 2 - SR Development Image
