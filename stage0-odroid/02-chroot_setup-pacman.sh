@@ -20,17 +20,3 @@ Server = https://srobo.github.io/kit-packages/armv7l/" >> /etc/pacman.conf
 
 info "Updating system"
 pacman -Syu --noconfirm
-
-info "Setting up user accounts"
-useradd -m robot
-echo 'root:toor' | chpasswd
-echo 'robot:tobor' | chpasswd
-
-info "Setting hostname"
-echo robot > /etc/hostname
-
-info "Setting locale"
-echo "en_GB.UTF-8 UTF-8" >> /etc/locale.gen
-locale-gen
-echo LANG=en_GB.UTF-8 > /etc/locale.conf
-echo KEYMAP=uk > /etc/vconsole.conf
