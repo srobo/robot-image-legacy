@@ -2,27 +2,29 @@
 import argparse
 import atexit
 import os
+import re
 import subprocess
 from pathlib import Path
-from re import compile
 from shutil import copytree, rmtree
 from typing import List
 
 REPO_DIR = Path(__file__).absolute().parent
 IMAGE_OUTPUT_SIZE = "8G"
 PLATFORM = "odroid"
-LOOPDEV = "/dev/loop0"
-
-STAGE_REGEX = compile("^stage([0-9]+)-([a-z0-9]+)$")
+# Either a block device or disk image file
+OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode()
+IS_BLOCK_DEVICE = True
+STAGE_REGEX = re.compile("^stage([0-9]+)-([a-z0-9]+)$")
 
 
 def cleanup(build_dir):
     subprocess.run(
         ["umount", build_dir],
     )
-    subprocess.run(
-        ["losetup", "-d", LOOPDEV],
-    )
+    if not IS_BLOCK_DEVICE:
+        subprocess.run(
+            ["losetup", "-d", OUTPUT_DEVICE],
+        )
 
 
 def determine_stage_list(platform: str) -> List[Path]:
@@ -101,9 +103,12 @@ if __name__ == "__main__":
 
     stages = determine_stage_list(PLATFORM)
 
+    if args.output_file.is_block_device():
+        OUTPUT_DEVICE = str(args.output_file)
+
     existing_path = os.environ["PATH"]
     environment = {
-        "OUTPUT_DEVICE": LOOPDEV,
+        "OUTPUT_DEVICE": OUTPUT_DEVICE,
         "IMAGE_OUTPUT_SIZE": IMAGE_OUTPUT_SIZE,
         "IMAGE_OUTPUT_PATH": str(args.output_file),
         "BUILD_DIR": str(args.build_dir),
