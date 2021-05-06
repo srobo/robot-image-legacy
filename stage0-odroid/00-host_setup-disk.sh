@@ -40,9 +40,5 @@ fi
 info "Creating root filesystem"
 mkfs.ext4 "$rootfs_part"
 
-if [ ! -d "mnt" ]; then
-  mkdir "$BUILD_DIR"
-fi
-
 info "Mounting root partition"
 mount -t ext4 -o rw,defaults,noatime "$rootfs_part" "$BUILD_DIR"
