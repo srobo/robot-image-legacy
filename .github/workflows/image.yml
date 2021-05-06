@@ -13,20 +13,9 @@ jobs:
       image: archlinux:base-devel
     steps:
       - uses: actions/checkout@v2
+      - run: echo "[aurto]\nSigLevel = Optional\nServer = https://aur.raccube.net/" >> /etc/pacman.conf
       - name: Install dependencies
-        run: sudo pacman -Syu --noconfirm gptfdisk arch-install-scripts git
-      - name: Install qemu-user-static-bin from the AUR
-        run: >
-          git clone https://aur.archlinux.org/qemu-user-static-bin.git;
-          cd qemu-user-static-bin;
-          makepkg -si;
-          cd ..
-      - name: Install archliunuxarm-keyring from the AUR
-        run: >
-          git clone https://aur.archlinux.org/archliunuxarm-keyring.git
-          cd archliunuxarm-keyring
-          makepkg -si
-          cd ..
+        run: pacman -Syu --noconfirm gptfdisk arch-install-scripts git qemu-user-static-bin archlinuxarm-keyring
       - name: Build ODroid image
         run: sudo ./build.py odroid.img
       - name: Compress image
