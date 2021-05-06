@@ -21,12 +21,22 @@ If you would like to run this under Docker, you can do so using [multiarch/qemu-
 
 ## Stages
 
-Files:
+The build process loops through a number of stages to gradually build up the image in a modular style.
 
-00-run.sh
-00-run-chroot.sh
-00-packages
+The stages each have a distinct purpose:
 
 - Stage 0 - Build working ALARM system for device
 - Stage 1 - Minimal SR Kit Software
 - Stage 2 - SR Development Image
+
+Stage 0 will be different for each hardware category
+
+There are three types of files in each stage:
+
+- `xx-host_*.sh` - Run the bash script on the build host
+- `xx-chroot_*.sh` - Run the bash script inside the chroot
+- `xx-packages` - Install these packages inside the chroot
+
+The files are executed by sorting them on the number at the start. It should be
+assumed that any file starting with the same number may be executed in parallel
+within the same stage.
