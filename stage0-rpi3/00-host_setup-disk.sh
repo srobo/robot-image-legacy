@@ -60,3 +60,10 @@ fi
 
 info "Mounting root partition"
 mount -t ext4 -o rw,defaults,noatime "$rootfs_part" "$BUILD_DIR"
+
+if [ ! -d "${BUILD_DIR}/boot" ]; then
+  mkdir "${BUILD_DIR}/boot"
+fi
+
+info "Mounting boot partition"
+mount -t vfat -o rw,defaults,noatime "$boot_part" "$BUILD_DIR/boot"

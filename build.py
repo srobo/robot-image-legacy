@@ -10,7 +10,7 @@ from typing import List
 
 REPO_DIR = Path(__file__).absolute().parent
 IMAGE_OUTPUT_SIZE = "8G"
-PLATFORM = "odroid"
+PLATFORM = "rpi3"
 # Either a block device or disk image file
 OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode()
 IS_BLOCK_DEVICE = True
@@ -20,6 +20,9 @@ STAGE_REGEX = re.compile("^stage([0-9]+)-([a-z0-9]+)$")
 def cleanup(build_dir):
     subprocess.run(
         ["umount", build_dir],
+    )
+    subprocess.run(
+        ["umount", f"{build_dir}/boot"],
     )
     if not IS_BLOCK_DEVICE:
         subprocess.run(
