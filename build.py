@@ -15,15 +15,30 @@ PLATFORM = "rpi3"
 OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode()
 IS_BLOCK_DEVICE = True
 STAGE_REGEX = re.compile("^stage([0-9]+)-([a-z0-9]+)$")
+PROC_MOUNTS = Path("/proc/mounts")
+
+
+def find_mounted_directories(build_dir: Path) -> List[Path]:
+    """
+    Find directories inside the build_dir that are mounted.
+
+    Only checks for first-level mounts, e.g /boot
+    """
+    dirs = [build_dir]  # Include root dir
+    with PROC_MOUNTS.open("r") as fh:
+        for line in fh:
+            path = Path(line.split(" ")[1])
+            if path in build_dir.iterdir():
+                dirs.append(path)
+    return dirs
 
 
 def cleanup(build_dir):
-    subprocess.run(
-        ["umount", build_dir],
-    )
-    subprocess.run(
-        ["umount", f"{build_dir}/boot"],
-    )
+    dirs = find_mounted_directories(build_dir)
+    for d in dirs:
+        subprocess.run(
+            ["umount", d],
+        )
     if not IS_BLOCK_DEVICE:
         subprocess.run(
             ["losetup", "-d", OUTPUT_DEVICE],
@@ -120,5 +135,5 @@ if __name__ == "__main__":
 
     atexit.register(cleanup, args.build_dir)
 
-    for stage in stages:
-        run_stage(stage, environment, args.build_dir)
+    # for stage in stages:
+    #     run_stage(stage, environment, args.build_dir)

@@ -15,7 +15,6 @@ info "Partitioning disk image"
 (
   echo o # create a new MS-DOS partition table
 
-  # TODO: Separate boot partition
   # TODO: Secondary system partition for AB
 
   # Boot partition
