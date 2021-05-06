@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: archlinux:base
+      image: archlinux:base-devel
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
