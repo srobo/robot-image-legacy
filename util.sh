@@ -13,6 +13,7 @@ export -f vinfo
 
 
 function cleanup {
+  info "Cleaning up"
   info "Unmounting" "$OUTPUT_DEVICE"
   umount -R "$BUILD_DIR"
   if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then

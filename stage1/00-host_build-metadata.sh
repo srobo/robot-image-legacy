@@ -1,15 +1,7 @@
 #!/bin/bash
 set -e
 
-export CARCH=armv7l
-info "Bootstrapping" "Arch Linux ARM"
-# Reads in common and platform packages and runs pacstrap with them
-cat stage0/packages{,-"$PLATFORM"} | xargs pacstrap -cMGC stage0/pacman.conf "$BUILD_DIR"
-
-info "Flashing" "U-Boot"
-cd "$BUILD_DIR/boot"
-./sd_fusing.sh "$OUTPUT_DEVICE"
-cd "$BUILD_DIR/.."
+source ./util.sh
 
 info "Injecting" "bees 🐝🐝🐝🐝"
 cat res/bee >> "$BUILD_DIR/etc/issue"
