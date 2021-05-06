@@ -10,12 +10,21 @@ from typing import List
 
 REPO_DIR = Path(__file__).absolute().parent
 IMAGE_OUTPUT_SIZE = "8G"
-PLATFORM = "rpi3"
 # Either a block device or disk image file
 OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode()
 IS_BLOCK_DEVICE = True
 STAGE_REGEX = re.compile("^stage([0-9]+)-([a-z0-9]+)$")
 PROC_MOUNTS = Path("/proc/mounts")
+
+
+def detect_available_platforms() -> List[str]:
+    """Detect stage0 platforms that are available."""
+    platforms: List[str] = []
+    for dir in REPO_DIR.iterdir():
+        if match := STAGE_REGEX.match(dir.name):
+            _, plat = match.groups()
+            platforms.append(plat)
+    return platforms
 
 
 def find_mounted_directories(build_dir: Path) -> List[Path]:
@@ -110,6 +119,12 @@ if __name__ == "__main__":
         default=REPO_DIR / "cache",
     )
     parser.add_argument(
+        "platform",
+        help="platform to build image for",
+        choices=detect_available_platforms(),
+        type=str,
+    )
+    parser.add_argument(
         "output_file",
         help="file to write image to",
         type=Path,
@@ -119,7 +134,7 @@ if __name__ == "__main__":
     print("SR Image Builder")
     print(f"Build directory: {args.build_dir}")
 
-    stages = determine_stage_list(PLATFORM)
+    stages = determine_stage_list(args.platform)
 
     if args.output_file.is_block_device():
         OUTPUT_DEVICE = str(args.output_file)
@@ -135,5 +150,5 @@ if __name__ == "__main__":
 
     atexit.register(cleanup, args.build_dir)
 
-    # for stage in stages:
-    #     run_stage(stage, environment, args.build_dir)
+    for stage in stages:
+        run_stage(stage, environment, args.build_dir)
