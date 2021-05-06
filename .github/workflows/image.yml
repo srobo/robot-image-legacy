@@ -17,9 +17,9 @@ jobs:
         run: sudo pacman -Syu --noconfirm gptfdisk arch-install-scripts git
       - name: Install qemu-user-static-bin from the AUR
         run: >
-          git clone https://aur.archlinux.org/qemu-user-static-bin.git
-          cd qemu-user-static-bin
-          makepkg -si
+          git clone https://aur.archlinux.org/qemu-user-static-bin.git;
+          cd qemu-user-static-bin;
+          makepkg -si;
           cd ..
       - name: Install archliunuxarm-keyring from the AUR
         run: >
