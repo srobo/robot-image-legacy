@@ -10,17 +10,44 @@ from typing import List
 
 REPO_DIR = Path(__file__).absolute().parent
 IMAGE_OUTPUT_SIZE = "8G"
-PLATFORM = "odroid"
 # Either a block device or disk image file
 OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode()
 IS_BLOCK_DEVICE = True
 STAGE_REGEX = re.compile("^stage([0-9]+)-([a-z0-9]+)$")
+PROC_MOUNTS = Path("/proc/mounts")
+
+
+def detect_available_platforms() -> List[str]:
+    """Detect stage0 platforms that are available."""
+    platforms: List[str] = []
+    for dir in REPO_DIR.iterdir():
+        if match := STAGE_REGEX.match(dir.name):
+            _, plat = match.groups()
+            platforms.append(plat)
+    return platforms
+
+
+def find_mounted_directories(build_dir: Path) -> List[Path]:
+    """
+    Find directories inside the build_dir that are mounted.
+
+    Only checks for first-level mounts, e.g /boot
+    """
+    dirs = [build_dir]  # Include root dir
+    with PROC_MOUNTS.open("r") as fh:
+        for line in fh:
+            path = Path(line.split(" ")[1])
+            if path in build_dir.iterdir():
+                dirs.append(path)
+    return dirs
 
 
 def cleanup(build_dir):
-    subprocess.run(
-        ["umount", build_dir],
-    )
+    dirs = find_mounted_directories(build_dir)
+    for d in dirs:
+        subprocess.run(
+            ["umount", d],
+        )
     if not IS_BLOCK_DEVICE:
         subprocess.run(
             ["losetup", "-d", OUTPUT_DEVICE],
@@ -92,6 +119,12 @@ if __name__ == "__main__":
         default=REPO_DIR / "cache",
     )
     parser.add_argument(
+        "platform",
+        help="platform to build image for",
+        choices=detect_available_platforms(),
+        type=str,
+    )
+    parser.add_argument(
         "output_file",
         help="file to write image to",
         type=Path,
@@ -101,7 +134,7 @@ if __name__ == "__main__":
     print("SR Image Builder")
     print(f"Build directory: {args.build_dir}")
 
-    stages = determine_stage_list(PLATFORM)
+    stages = determine_stage_list(args.platform)
 
     if args.output_file.is_block_device():
         OUTPUT_DEVICE = str(args.output_file)
