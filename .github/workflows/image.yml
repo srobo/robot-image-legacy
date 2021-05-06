@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:base-devel
+      options: --privileged
     steps:
       - uses: actions/checkout@v2
       - run: echo -e "[aurto]\nSigLevel = Optional\nServer = https://aur.raccube.net/" >> /etc/pacman.conf
