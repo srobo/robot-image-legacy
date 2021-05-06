@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: sudo pacman -Syu fdisk arch-install-scripts
+        run: sudo pacman -Syu gptfdisk arch-install-scripts
       - name: Install qemu-user-static-bin from the AUR
         run: >
           git clone https://aur.archlinux.org/qemu-user-static-bin.git
