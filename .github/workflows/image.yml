@@ -13,7 +13,7 @@ jobs:
       image: archlinux:base-devel
     steps:
       - uses: actions/checkout@v2
-      - run: echo "[aurto]\nSigLevel = Optional\nServer = https://aur.raccube.net/" >> /etc/pacman.conf
+      - run: echo -e "[aurto]\nSigLevel = Optional\nServer = https://aur.raccube.net/" >> /etc/pacman.conf
       - name: Install dependencies
         run: pacman -Syu --noconfirm gptfdisk arch-install-scripts git qemu-user-static-bin archlinuxarm-keyring
       - name: Build ODroid image
