@@ -3,9 +3,6 @@ set -e
 
 source ./util.sh
 
-info "Injecting" "bees 🐝🐝🐝🐝"
-cat res/bee >> "$BUILD_DIR/etc/issue"
-
 info "Creating build metadata"
 (
   echo BUILD_USER="$(whoami)"
