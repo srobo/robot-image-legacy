@@ -5,13 +5,23 @@
 
 Scripts used to create a system image for SR brain board SD cards.
 
+**Supported Platforms:**
+
+| Platform           | Status    |
+|--------------------|-----------|
+| ODroid U3          | Supported |
+| Raspberry Pi 3     | Supported |
+| Raspberry Pi 4/400 | Supported |
+
 ## Requirements
 
 - bash
+- Python 3.8 or newer
 - curl
 - fdisk
 - [arch-install-scripts](https://archlinux.org/packages/extra/any/arch-install-scripts/)
 - [archlinuxarm-keyring](http://mirror.archlinuxarm.org/armv6h/core/archlinuxarm-keyring-20140119-1-any.pkg.tar.xz)
+- [uboot-tools](https://archlinux.org/packages/extra/any/uboot-tools/)
 
 You will also need to be running a system which is either running on an ARM platform (armv7 or newer) or have `binfmt_misc` set up on your system. 
 

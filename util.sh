@@ -13,6 +13,8 @@ export -f vinfo
 
 
 function cleanup {
+  info "Ensuring data has been flushed to disks"
+  sync
   info "Cleaning up"
   info "Unmounting" "$OUTPUT_DEVICE"
   umount -R "$BUILD_DIR"
