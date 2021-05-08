@@ -22,6 +22,8 @@ jobs:
         run: pacman -Syu --noconfirm gptfdisk arch-install-scripts git qemu-user-static-bin archlinuxarm-keyring python dosfstools
       - name: Build ODroid image
         run: sudo ./build.py ${{ matrix.platform }} robot-${{ matrix.platform }}.img
+        env:
+          CI: true
       - name: Compress image
         run: zstd robot-${{ matrix.platform }}.img
       - name: Publish compressed image
