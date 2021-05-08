@@ -4,6 +4,7 @@ import atexit
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 from shutil import copytree, rmtree
 from typing import List
@@ -11,59 +12,33 @@ from typing import List
 REPO_DIR = Path(__file__).absolute().parent
 IMAGE_OUTPUT_SIZE = "8G"
 # Either a block device or disk image file
-OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode()
+OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode().strip()
 IS_BLOCK_DEVICE = True
-STAGE_REGEX = re.compile("^stage([0-9]+)-([a-z0-9]+)$")
+STAGE_REGEX = re.compile("^stage([0-9]+)$")
 PROC_MOUNTS = Path("/proc/mounts")
 
 
 def detect_available_platforms() -> List[str]:
     """Detect stage0 platforms that are available."""
-    platforms: List[str] = []
-    for dir in REPO_DIR.iterdir():
-        if match := STAGE_REGEX.match(dir.name):
-            _, plat = match.groups()
-            platforms.append(plat)
-    return platforms
-
-
-def find_mounted_directories(build_dir: Path) -> List[Path]:
-    """
-    Find directories inside the build_dir that are mounted.
-
-    Only checks for first-level mounts, e.g /boot
-    """
-    dirs = [build_dir]  # Include root dir
-    with PROC_MOUNTS.open("r") as fh:
-        for line in fh:
-            path = Path(line.split(" ")[1])
-            if path in build_dir.iterdir():
-                dirs.append(path)
-    return dirs
+    platforms_dir = REPO_DIR / "platforms"
+    return [platform.name for platform in platforms_dir.iterdir()]
 
 
 def cleanup(build_dir):
-    dirs = find_mounted_directories(build_dir)
-    for d in dirs:
-        subprocess.run(
-            ["umount", d],
-        )
+    print("Syncing disks")
+    os.sync()
+    print("Unmounting")
+    subprocess.run(
+        ["umount", "--recursive", build_dir],
+    )
     if not IS_BLOCK_DEVICE:
         subprocess.run(
             ["losetup", "-d", OUTPUT_DEVICE],
         )
 
 
-def determine_stage_list(platform: str) -> List[Path]:
-    stage_list = []
-    for stage in sorted(REPO_DIR.glob("stage*")):
-        if match := STAGE_REGEX.match(stage.name):
-            num, plat = match.groups()
-            if num == "0" and plat == platform:
-                stage_list.append(stage)
-        else:
-            stage_list.append(stage)
-    return stage_list
+def determine_stage_list() -> List[Path]:
+    return sorted(REPO_DIR.glob("stage*"))
 
 
 def run_stage(stage: Path, environment, build_dir):
@@ -96,6 +71,10 @@ def run_stage(stage: Path, environment, build_dir):
 
 
 if __name__ == "__main__":
+    if os.geteuid() != 0:
+        sys.stderr.write("This script must run as superuser.\n")
+        sys.exit(1)
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -134,7 +113,7 @@ if __name__ == "__main__":
     print("SR Image Builder")
     print(f"Build directory: {args.build_dir}")
 
-    stages = determine_stage_list(args.platform)
+    stages = determine_stage_list()
 
     if args.output_file.is_block_device():
         OUTPUT_DEVICE = str(args.output_file)
@@ -146,6 +125,7 @@ if __name__ == "__main__":
         "IMAGE_OUTPUT_PATH": str(args.output_file),
         "BUILD_DIR": str(args.build_dir),
         "CACHE_DIR": str(args.cache_dir),
+        "PLATFORM": args.platform,
     }
 
     atexit.register(cleanup, args.build_dir)

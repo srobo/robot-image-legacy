@@ -17,6 +17,3 @@ echo "
 [srobo]
 SigLevel = Optional
 Server = https://srobo.github.io/kit-packages/armv7l/" >> /etc/pacman.conf
-
-info "Updating system"
-pacman -Syu --noconfirm
