@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: echo -e "[aurto]\nSigLevel = Optional\nServer = https://aur.raccube.net/" >> /etc/pacman.conf
       - name: Install dependencies
-        run: pacman -Syu --noconfirm gptfdisk arch-install-scripts git qemu-user-static-bin archlinuxarm-keyring python
+        run: pacman -Syu --noconfirm gptfdisk arch-install-scripts git qemu-user-static-bin archlinuxarm-keyring python dosfstools
       - name: Build ODroid image
         run: sudo ./build.py ${{ matrix.platform }} robot-${{ matrix.platform }}.img
       - name: Compress image
