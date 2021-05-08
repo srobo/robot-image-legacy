@@ -20,22 +20,8 @@ PROC_MOUNTS = Path("/proc/mounts")
 
 def detect_available_platforms() -> List[str]:
     """Detect stage0 platforms that are available."""
-    return [platform_dir.name for platform_dir in REPO_DIR.joinpath("platforms").iterdir()]
-
-
-def find_mounted_directories(build_dir: Path) -> List[Path]:
-    """
-    Find directories inside the build_dir that are mounted.
-
-    Only checks for first-level mounts, e.g /boot
-    """
-    dirs = [build_dir]  # Include root dir
-    with PROC_MOUNTS.open("r") as fh:
-        for line in fh:
-            path = Path(line.split(" ")[1])
-            if path in build_dir.iterdir():
-                dirs.append(path)
-    return dirs
+    platforms_dir = REPO_DIR / "platforms"
+    return [platform.name for platform in platforms_dir.iterdir()]
 
 
 def cleanup(build_dir):
@@ -43,7 +29,7 @@ def cleanup(build_dir):
     os.sync()
     print("Unmounting")
     subprocess.run(
-        ["umount", "-r", build_dir],
+        ["umount", "--recursive", build_dir],
     )
     if not IS_BLOCK_DEVICE:
         subprocess.run(

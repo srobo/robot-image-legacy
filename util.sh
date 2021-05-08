@@ -12,18 +12,6 @@ function vinfo {
 export -f vinfo
 
 
-function cleanup {
-  info "Ensuring data has been flushed to disks"
-  sync
-  info "Cleaning up"
-  info "Unmounting" "$OUTPUT_DEVICE"
-  umount -R "$BUILD_DIR"
-  if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
-    losetup -d "$OUTPUT_DEVICE"
-  fi
-}
-export -f cleanup
-
 function stage_banner {
   sed "s/\%/$1/" res/stage-banner
 }

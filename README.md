@@ -7,11 +7,11 @@ Scripts used to create a system image for SR brain board SD cards.
 
 **Supported Platforms:**
 
-| Platform           | Status    |
-|--------------------|-----------|
-| ODroid U3          | Supported |
-| Raspberry Pi 3     | Supported |
-| Raspberry Pi 4/400 | Supported |
+| Platform            | Status    |
+|---------------------|-----------|
+| ODroid U3           | Supported |
+| Raspberry Pi 3B/B+  | Supported |
+| Raspberry Pi 4B/400 | Supported |
 
 ## Requirements
 

@@ -30,7 +30,7 @@ info "Partitioning disk image"
   echo n      # new partition
   echo p      # primary partition
   echo 2      # partition number
-  echo 413696 # first sector (accept default)
+  echo 413696 # first sector at 200M + 4096
   echo        # last sector (accept default)
 
   echo w # write changes
