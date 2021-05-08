@@ -35,7 +35,7 @@ info "Partitioning disk image"
   echo        # last sector (accept default)
 
   echo w # write changes
-) | /sbin/fdisk "$IMAGE_OUTPUT_PATH" > /dev/null
+) | /sbin/fdisk "$IMAGE_OUTPUT_PATH" #> /dev/null
 
 if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
   info "Setting up loop device"
