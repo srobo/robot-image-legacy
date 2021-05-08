@@ -12,17 +12,6 @@ else
   dd if=/dev/zero of="$OUTPUT_DEVICE" bs=1M count=8
 fi
 
-
-if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
-  info "Setting up loop device"
-  losetup -P "$OUTPUT_DEVICE" "$IMAGE_OUTPUT_PATH"
-  boot_part="${OUTPUT_DEVICE}p1"
-  root_part="${OUTPUT_DEVICE}p2"
-else
-  boot_part="${OUTPUT_DEVICE}1"
-  root_part="${OUTPUT_DEVICE}2"
-fi
-
 info "Partitioning disk image"
 (
   echo o # create a new MS-DOS partition table
@@ -47,6 +36,19 @@ info "Partitioning disk image"
 
   echo w # write changes
 ) | /sbin/fdisk "$OUTPUT_DEVICE" #> /dev/null
+
+if [ "$CI" = "true" ]; then
+  boot_part="$(losetup -o 4096 -f "$IMAGE_OUTPUT_PATH")"
+  root_part="$(losetup -o 413696 -f "$IMAGE_OUTPUT_PATH")"
+elif [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
+  info "Setting up loop device"
+  losetup -P "$OUTPUT_DEVICE" "$IMAGE_OUTPUT_PATH"
+  boot_part="${OUTPUT_DEVICE}p1"
+  root_part="${OUTPUT_DEVICE}p2"
+else
+  boot_part="${OUTPUT_DEVICE}1"
+  root_part="${OUTPUT_DEVICE}2"
+fi
 
 /sbin/fdisk -l "$IMAGE_OUTPUT_PATH"
 file "$IMAGE_OUTPUT_PATH"
