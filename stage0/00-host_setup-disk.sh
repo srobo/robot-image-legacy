@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -x
 
 source ./util.sh
 
@@ -49,6 +50,7 @@ fi
 file "$OUTPUT_DEVICE"
 file "$boot_part"
 file "$root_part"
+ls -l "$OUTPUT_DEVICE"*
 
 info "Creating boot filesystem"
 mkfs.vfat -F 32 "$boot_part"
