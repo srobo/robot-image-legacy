@@ -37,15 +37,13 @@ info "Partitioning disk image"
   echo w # write changes
 ) | /sbin/fdisk "$IMAGE_OUTPUT_PATH" #> /dev/null
 
-if [ "$CI" = "true" ]; then
-  info "Setting up loop devices" "HACK HACK HACK"
-  boot_part="$(losetup -o 4096 -f "$IMAGE_OUTPUT_PATH")"
-  root_part="$(losetup -o 413696 -f "$IMAGE_OUTPUT_PATH")"
-elif [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
+if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
   info "Setting up loop device"
-  losetup -P "$OUTPUT_DEVICE" "$IMAGE_OUTPUT_PATH"
-  boot_part="${OUTPUT_DEVICE}p1"
-  root_part="${OUTPUT_DEVICE}p2"
+
+  mkdir -p "$BUILD_DIR"
+  mount -o loop,offset=413696 "IMAGE_OUTPUT_PATH" "$BUILD_DIR"
+  mkdir -p "$BUILD_DIR/boot"
+  mount -o loop,offset=4096 "IMAGE_OUTPUT_PATH" "$BUILD_DIR/boot"
 else
   boot_part="${OUTPUT_DEVICE}1"
   root_part="${OUTPUT_DEVICE}2"
@@ -65,7 +63,6 @@ mkfs.vfat -F 32 "$boot_part"
 info "Creating root filesystem"
 mkfs.ext4 -q "$root_part"
 
-mkdir -p "$BUILD_DIR"
 
 info "Mounting root partition"
 mount -t ext4 -o rw,defaults,noatime "$root_part" "$BUILD_DIR"
