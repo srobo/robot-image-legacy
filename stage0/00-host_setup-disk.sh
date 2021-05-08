@@ -47,6 +47,7 @@ else
   root_part="${OUTPUT_DEVICE}2"
 fi
 
+losetup
 file "$OUTPUT_DEVICE"
 file "$boot_part"
 file "$root_part"
