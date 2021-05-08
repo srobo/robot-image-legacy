@@ -46,6 +46,10 @@ else
   root_part="${OUTPUT_DEVICE}2"
 fi
 
+file "$OUTPUT_DEVICE"
+file "$boot_part"
+file "$root_part"
+
 info "Creating boot filesystem"
 mkfs.vfat -F 32 "$boot_part"
 
