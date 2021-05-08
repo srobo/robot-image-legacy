@@ -4,9 +4,6 @@ set -x
 
 source ./util.sh
 
-env
-exit
-
 if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
   info "Creating disk image"
   fallocate -l "$IMAGE_OUTPUT_SIZE" "$IMAGE_OUTPUT_PATH"
