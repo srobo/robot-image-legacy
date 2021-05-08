@@ -127,7 +127,9 @@ if __name__ == "__main__":
         "BUILD_DIR": str(args.build_dir),
         "CACHE_DIR": str(args.cache_dir),
         "PLATFORM": args.platform,
+        "CI": os.environ["CI"],
     }
+    # TODO: Pass through GITHUB_* environment variables
 
     atexit.register(cleanup, args.build_dir)
 
