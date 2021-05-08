@@ -35,9 +35,10 @@ info "Partitioning disk image"
   echo        # last sector (accept default)
 
   echo w # write changes
-) | /sbin/fdisk "$OUTPUT_DEVICE" #> /dev/null
+) | /sbin/fdisk "$IMAGE_OUTPUT_PATH" #> /dev/null
 
 if [ "$CI" = "true" ]; then
+  info "Setting up loop devices" "HACK HACK HACK"
   boot_part="$(losetup -o 4096 -f "$IMAGE_OUTPUT_PATH")"
   root_part="$(losetup -o 413696 -f "$IMAGE_OUTPUT_PATH")"
 elif [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
