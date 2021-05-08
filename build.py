@@ -125,7 +125,7 @@ if __name__ == "__main__":
         "IMAGE_OUTPUT_PATH": str(args.output_file),
         "BUILD_DIR": str(args.build_dir),
         "CACHE_DIR": str(args.cache_dir),
-        "PLATFORM": str(args.platform),
+        "PLATFORM": args.platform,
     }
 
     atexit.register(cleanup, args.build_dir)
