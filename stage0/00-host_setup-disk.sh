@@ -47,6 +47,8 @@ else
   root_part="${OUTPUT_DEVICE}2"
 fi
 
+/sbin/fdisk -l "$IMAGE_OUTPUT_PATH"
+file "$IMAGE_OUTPUT_PATH"
 losetup
 file "$OUTPUT_DEVICE"
 file "$boot_part"
