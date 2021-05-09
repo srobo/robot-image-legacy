@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Update apt repositories
+        run: sudo apt update
       - name: Install dependencies
         run: sudo apt install -y libarchive-tools curl fdisk qemu-user-static zstd
       - name: Build ODroid image
