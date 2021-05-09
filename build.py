@@ -154,6 +154,8 @@ if __name__ == "__main__":
     if which("pacman") is None:
         # TODO: Make this also run on ARM systems
         download_package("https://archlinux.org/packages/core/x86_64/pacman/download/")
+    if not Path(f"/lib/x86_64-linux-gnu/libc.so.6").exists():
+        download_package("https://archlinux.org/packages/core/x86_64/glibc/download/")
 
     existing_path = f"{REPO_DIR}/tools/usr/bin:{os.environ['PATH']}"
     # This felt horrible to write but Python doesn't have the nice things I expect
