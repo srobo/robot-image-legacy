@@ -9,7 +9,6 @@ systemctl enable systemd-networkd
 systemctl enable systemd-resolved
 systemctl enable systemd-udevd
 systemctl enable udisks2
-systemctl enable sshd
 systemctl enable mosquitto
 systemctl enable astdiskd
 systemctl enable astmetad
