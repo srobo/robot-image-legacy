@@ -148,8 +148,8 @@ if __name__ == "__main__":
     if args.output_file.is_block_device():
         OUTPUT_DEVICE = str(args.output_file)
 
-    Path("tools/").mkdir(exist_ok=True)
     if which("pacstrap") is None:
+        Path("tools/").mkdir(exist_ok=True)
         download_package("https://archlinux.org/packages/extra/any/arch-install-scripts/download/")
     if which("pacman") is None:
         # TODO: Make this also run on ARM systems
