@@ -128,6 +128,12 @@ if __name__ == "__main__":
         "PLATFORM": args.platform,
     }
 
+    if "GITHUB_ACTIONS" in os.environ:
+        environment["GITHUB_ACTIONS"] = os.environ["GITHUB_ACTIONS"]
+        environment["GITHUB_ACTOR"] = os.environ["GITHUB_ACTOR"]
+        environment["GITHUB_REF"] = os.environ["GITHUB_REF"]
+        environment["GITHUB_REPOSITORY"] = os.environ["GITHUB_REPOSITORY"]
+
     atexit.register(cleanup, args.build_dir)
 
     for stage in stages:
