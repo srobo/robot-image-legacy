@@ -13,3 +13,4 @@ systemctl enable mosquitto
 systemctl enable astdiskd
 systemctl enable astmetad
 systemctl enable astprocd
+systemctl enable astoria-udiskie
