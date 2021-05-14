@@ -36,6 +36,8 @@ info "Partitioning disk image"
   echo w # write changes
 ) | /sbin/fdisk "$IMAGE_OUTPUT_PATH" > /dev/null
 
+partprobe
+
 if [[ "$OUTPUT_DEVICE" =~ ^/dev/loop ]]; then
   info "Setting up loop device"
   losetup -P "$OUTPUT_DEVICE" "$IMAGE_OUTPUT_PATH"
@@ -50,12 +52,26 @@ info "Creating boot filesystem"
 mkfs.vfat -F 32 "$boot_part"
 
 info "Creating root filesystem"
-mkfs.ext4 -q "$root_part"
+mkfs.btrfs -f "$root_part"
 
 mkdir -p "$BUILD_DIR"
 
+info "Creating subvolumes"
+btrfs_flags="rw,defaults,noatime,ssd,compress=zstd"
+mount -t btrfs -o "$btrfs_flags" "$root_part" "$BUILD_DIR"
+
+btrfs subvolume create "$BUILD_DIR/@"
+btrfs subvolume create "$BUILD_DIR/@home"
+btrfs subvolume create "$BUILD_DIR/@snapshots"
+btrfs subvolume create "$BUILD_DIR/@var_log"
+umount "$BUILD_DIR"
+
 info "Mounting root partition"
-mount -t ext4 -o rw,defaults,noatime "$root_part" "$BUILD_DIR"
+mount -t btrfs -o "$btrfs_flags,subvol=@" "$root_part" "$BUILD_DIR"
+mkdir -p "$BUILD_DIR/home" "$BUILD_DIR/.snapshots" "$BUILD_DIR/var/log"
+mount -t btrfs -o "$btrfs_flags,subvol=@home" "$root_part" "$BUILD_DIR/home"
+mount -t btrfs -o "$btrfs_flags,subvol=@snapshots" "$root_part" "$BUILD_DIR/.snapshots"
+mount -t btrfs -o "$btrfs_flags,subvol=@var_log" "$root_part" "$BUILD_DIR/var/log"
 
 info "Mounting boot partition"
 mkdir -p "$BUILD_DIR/boot"
