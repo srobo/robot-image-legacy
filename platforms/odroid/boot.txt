@@ -7,7 +7,7 @@
 setenv bootdelay 0
 
 part uuid ${devtype} ${devnum}:${bootpart} uuid
-setenv bootargs "console=ttySAC1 console=${console} root=/dev/mmcblk0p2 init=/usr/lib/systemd/systemd rw rootwait smsc95xx.macaddr=${macaddr} quiet"
+setenv bootargs "console=ttySAC1 console=${console} root=/dev/mmcblk0p2 init=/usr/lib/systemd/systemd rw rootwait rootflags=rw,defaults,noatime,ssd,subvol=@ smsc95xx.macaddr=${macaddr} quiet"
 
 if load ${devtype} ${devnum}:${bootpart} ${kernel_addr_r} /zImage; then
   if load ${devtype} ${devnum}:${bootpart} ${fdt_addr_r} /dtbs/${fdtfile}; then
