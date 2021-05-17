@@ -52,7 +52,7 @@ info "Creating boot filesystem"
 mkfs.vfat -F 32 "$boot_part"
 
 info "Creating root filesystem"
-mkfs.btrfs -f "$root_part"
+mkfs.btrfs -f --metadata single "$root_part"
 
 mkdir -p "$BUILD_DIR"
 
@@ -64,14 +64,16 @@ btrfs subvolume create "$BUILD_DIR/@"
 btrfs subvolume create "$BUILD_DIR/@home"
 btrfs subvolume create "$BUILD_DIR/@snapshots"
 btrfs subvolume create "$BUILD_DIR/@var_log"
+btrfs subvolume create "$BUILD_DIR/@var_srobo"
 umount "$BUILD_DIR"
 
 info "Mounting root partition"
 mount -t btrfs -o "$btrfs_flags,subvol=@" "$root_part" "$BUILD_DIR"
-mkdir -p "$BUILD_DIR/home" "$BUILD_DIR/.snapshots" "$BUILD_DIR/var/log"
+mkdir -p "$BUILD_DIR/home" "$BUILD_DIR/.snapshots" "$BUILD_DIR/var/log" "$BUILD_DIR/var/srobo"
 mount -t btrfs -o "$btrfs_flags,subvol=@home" "$root_part" "$BUILD_DIR/home"
 mount -t btrfs -o "$btrfs_flags,subvol=@snapshots" "$root_part" "$BUILD_DIR/.snapshots"
 mount -t btrfs -o "$btrfs_flags,subvol=@var_log" "$root_part" "$BUILD_DIR/var/log"
+mount -t btrfs -o "$btrfs_flags,subvol=@var_srobo" "$root_part" "$BUILD_DIR/var/srobo"
 
 info "Mounting boot partition"
 mkdir -p "$BUILD_DIR/boot"
