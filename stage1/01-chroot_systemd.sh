@@ -5,12 +5,14 @@ function info {
 }
 
 info "Enabling required systemd units"
-systemctl enable systemd-networkd
-systemctl enable systemd-resolved
-systemctl enable systemd-udevd
-systemctl enable udisks2
-systemctl enable mosquitto
-systemctl enable astdiskd
-systemctl enable astmetad
-systemctl enable astprocd
-systemctl enable astoria-udiskie
+systemctl enable \
+  systemd-networkd \
+  systemd-udevd \
+  udisks2 \
+  dnsmasq \
+  mosquitto \
+  astdiskd \
+  astmetad \
+  astprocd \
+  astwifid \
+  astoria-udiskie
