@@ -1,5 +1,6 @@
 mnt/
 *.img
+*.img.zst
 cache/
 .idea/
 

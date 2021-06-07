@@ -5,12 +5,13 @@ import os
 import re
 import subprocess
 import sys
+from tempfile import mkdtemp
 from pathlib import Path
 from shutil import copytree, rmtree
 from typing import List
 
 REPO_DIR = Path(__file__).absolute().parent
-IMAGE_OUTPUT_SIZE = "8G"
+IMAGE_OUTPUT_SIZE = "3G"
 # Either a block device or disk image file
 OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode().strip()
 IS_BLOCK_DEVICE = True
@@ -24,7 +25,7 @@ def detect_available_platforms() -> List[str]:
     return [platform.name for platform in platforms_dir.iterdir()]
 
 
-def cleanup(build_dir):
+def cleanup(build_dir: Path):
     print("Syncing disks")
     os.sync()
     print("Unmounting")
@@ -35,6 +36,7 @@ def cleanup(build_dir):
         subprocess.run(
             ["losetup", "-d", OUTPUT_DEVICE],
         )
+        build_dir.rmdir()
 
 
 def determine_stage_list() -> List[Path]:
@@ -50,16 +52,17 @@ def run_stage(stage: Path, environment, build_dir):
                 [str(run_script)],
                 cwd=REPO_DIR,
                 env=environment,
-            )
+            ).check_returncode()
 
         for run_script in stage.glob(f"{i}-chroot_*.sh"):
             copytree(stage, stage_path)
-            subprocess.run(
+            proc = subprocess.run(
                 ["arch-chroot", str(args.build_dir), f"/stage/{run_script.name}"],
                 cwd=REPO_DIR,
                 env=environment,
             )
             rmtree(stage_path)
+            proc.check_returncode()
 
         for run_script in stage.glob(f"{i}-packages*"):
             subprocess.run(
@@ -67,7 +70,7 @@ def run_stage(stage: Path, environment, build_dir):
                 + run_script.open("r").read().splitlines(),
                 cwd=REPO_DIR,
                 env=environment,
-            )
+            ).check_returncode()
 
 
 if __name__ == "__main__":
@@ -88,7 +91,7 @@ if __name__ == "__main__":
         "--build-dir",
         help="build directory",
         type=Path,
-        default=REPO_DIR / "mnt",
+        default=None,
     )
     parser.add_argument(
         "-c",
@@ -109,6 +112,11 @@ if __name__ == "__main__":
         type=Path,
     )
     args = parser.parse_args()
+
+    if args.build_dir is None:
+        args.build_dir = Path(mkdtemp(prefix='robot-build-'))
+
+    IS_BLOCK_DEVICE = Path(args.output_file).is_block_device()
 
     print("SR Image Builder")
     print(f"Build directory: {args.build_dir}")
@@ -137,4 +145,8 @@ if __name__ == "__main__":
     atexit.register(cleanup, args.build_dir)
 
     for stage in stages:
-        run_stage(stage, environment, args.build_dir)
+        try:
+            run_stage(stage, environment, args.build_dir)
+        except subprocess.CalledProcessError:
+            sys.stderr.write(f"Build failed in {stage.name}\n")
+            sys.exit(1)
