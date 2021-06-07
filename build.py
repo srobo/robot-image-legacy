@@ -35,6 +35,7 @@ def cleanup(build_dir: Path):
         subprocess.run(
             ["losetup", "-d", OUTPUT_DEVICE],
         )
+        build_dir.rmdir()
 
 
 def determine_stage_list() -> List[Path]:
@@ -89,7 +90,7 @@ if __name__ == "__main__":
         "--build-dir",
         help="build directory",
         type=Path,
-        default=REPO_DIR / "mnt",
+        default=None,
     )
     parser.add_argument(
         "-c",
@@ -110,6 +111,11 @@ if __name__ == "__main__":
         type=Path,
     )
     args = parser.parse_args()
+
+    if args.build_dir is None:
+        args.build_dir = Path(subprocess.check_output(['mktemp', '-d', '/tmp/robot-build-XXXXXX']).decode().strip())
+
+    IS_BLOCK_DEVICE = Path(args.output_file).is_block_device()
 
     print("SR Image Builder")
     print(f"Build directory: {args.build_dir}")
