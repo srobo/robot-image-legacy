@@ -24,7 +24,7 @@ def detect_available_platforms() -> List[str]:
     return [platform.name for platform in platforms_dir.iterdir()]
 
 
-def cleanup(build_dir):
+def cleanup(build_dir: Path):
     print("Syncing disks")
     os.sync()
     print("Unmounting")
@@ -50,16 +50,17 @@ def run_stage(stage: Path, environment, build_dir):
                 [str(run_script)],
                 cwd=REPO_DIR,
                 env=environment,
-            )
+            ).check_returncode()
 
         for run_script in stage.glob(f"{i}-chroot_*.sh"):
             copytree(stage, stage_path)
-            subprocess.run(
+            proc = subprocess.run(
                 ["arch-chroot", str(args.build_dir), f"/stage/{run_script.name}"],
                 cwd=REPO_DIR,
                 env=environment,
             )
             rmtree(stage_path)
+            proc.check_returncode()
 
         for run_script in stage.glob(f"{i}-packages*"):
             subprocess.run(
@@ -67,7 +68,7 @@ def run_stage(stage: Path, environment, build_dir):
                 + run_script.open("r").read().splitlines(),
                 cwd=REPO_DIR,
                 env=environment,
-            )
+            ).check_returncode()
 
 
 if __name__ == "__main__":
@@ -137,4 +138,8 @@ if __name__ == "__main__":
     atexit.register(cleanup, args.build_dir)
 
     for stage in stages:
-        run_stage(stage, environment, args.build_dir)
+        try:
+            run_stage(stage, environment, args.build_dir)
+        except subprocess.CalledProcessError:
+            sys.stderr.write(f"Build failed in {stage.name}\n")
+            sys.exit(1)
