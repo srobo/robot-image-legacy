@@ -10,7 +10,7 @@ from shutil import copytree, rmtree
 from typing import List
 
 REPO_DIR = Path(__file__).absolute().parent
-IMAGE_OUTPUT_SIZE = "8G"
+IMAGE_OUTPUT_SIZE = "3G"
 # Either a block device or disk image file
 OUTPUT_DEVICE = subprocess.check_output(['losetup', '-f']).decode().strip()
 IS_BLOCK_DEVICE = True
