@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+from tempfile import mkdtemp
 from pathlib import Path
 from shutil import copytree, rmtree
 from typing import List
@@ -113,7 +114,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.build_dir is None:
-        args.build_dir = Path(subprocess.check_output(['mktemp', '-d', '/tmp/robot-build-XXXXXX']).decode().strip())
+        args.build_dir = Path(mkdtemp(prefix='robot-build-'))
 
     IS_BLOCK_DEVICE = Path(args.output_file).is_block_device()
 
