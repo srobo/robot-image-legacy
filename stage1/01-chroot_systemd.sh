@@ -15,4 +15,5 @@ systemctl enable \
   astmetad \
   astprocd \
   astwifid \
-  astoria-udiskie
+  astoria-udiskie \
+  lighttpd
