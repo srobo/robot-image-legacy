@@ -52,6 +52,7 @@ def run_stage(stage: Path, environment, build_dir):
                 [str(run_script)],
                 cwd=REPO_DIR,
                 env=environment,
+                stdin=subprocess.DEVNULL,
             ).check_returncode()
 
         for run_script in stage.glob(f"{i}-chroot_*.sh"):
@@ -60,6 +61,7 @@ def run_stage(stage: Path, environment, build_dir):
                 ["arch-chroot", str(args.build_dir), f"/stage/{run_script.name}"],
                 cwd=REPO_DIR,
                 env=environment,
+                stdin=subprocess.DEVNULL,
             )
             rmtree(stage_path)
             proc.check_returncode()
@@ -70,6 +72,7 @@ def run_stage(stage: Path, environment, build_dir):
                 + run_script.open("r").read().splitlines(),
                 cwd=REPO_DIR,
                 env=environment,
+                stdin=subprocess.DEVNULL,
             ).check_returncode()
 
 
