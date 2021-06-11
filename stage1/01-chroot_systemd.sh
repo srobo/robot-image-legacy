@@ -16,4 +16,5 @@ systemctl enable \
   astprocd \
   astwifid \
   astoria-udiskie \
-  lighttpd
+  lighttpd \
+  nftables

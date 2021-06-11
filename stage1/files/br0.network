@@ -4,4 +4,3 @@ Name=br0
 [Network]
 DNS=192.168.32.1
 Address=192.168.32.1/24
-Gateway=192.168.32.1

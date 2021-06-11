@@ -14,3 +14,6 @@ cp stage1/files/resolv.conf "$BUILD_DIR/etc/resolv.conf"
 
 info "Copying MQTT server configuration"
 cp stage1/files/mosquitto.conf "$BUILD_DIR/etc/mosquitto/mosquitto.conf"
+
+info "Copying nftables configuration"
+cp stage1/files/nftables.conf "$BUILD_DIR/etc/nftables.conf"
