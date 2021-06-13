@@ -1,0 +1,10 @@
+set number
+
+" Tab inserts 4 spaces
+set expandtab
+set ts=4 sw=4 sts=4
+
+" Autocomplete in command mode (Tab to invoke)
+set wildmenu
+
+syntax on

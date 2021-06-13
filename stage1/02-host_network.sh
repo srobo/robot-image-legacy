@@ -17,3 +17,6 @@ cp stage1/files/mosquitto.conf "$BUILD_DIR/etc/mosquitto/mosquitto.conf"
 
 info "Copying nftables configuration"
 cp stage1/files/nftables.conf "$BUILD_DIR/etc/nftables.conf"
+
+info "Setting sysctl net.ipv4.ip_forward=1"
+echo "net.ipv4.ip_forward=1" > "$BUILD_DIR/etc/sysctl.d/ip_forward.conf"
