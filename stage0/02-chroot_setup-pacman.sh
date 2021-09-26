@@ -12,8 +12,3 @@ pacman-key --init
 info "Populating keyring"
 pacman-key --populate archlinuxarm
 
-info "Adding SR kit-packages repository"
-echo "
-[srobo]
-SigLevel = Optional
-Server = https://srobo.github.io/kit-packages/armv7l/" >> /etc/pacman.conf
