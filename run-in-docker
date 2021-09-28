@@ -1,0 +1,2 @@
+#!/bin/bash
+docker run --privileged -it -v /home/kjk/Desktop/robot-image:/robot-image robot-build /robot-image/build.py $@
