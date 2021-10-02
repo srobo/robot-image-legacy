@@ -2,7 +2,7 @@ name: Build and publish build development environment Docker image
 
 on:
   push:
-    branches: ['main', 'ci']
+    branches: ['main', 'kjk/docker']
 
 env:
   REGISTRY: ghcr.io
