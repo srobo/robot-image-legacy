@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run --privileged -it -v /home/kjk/Desktop/robot-image:/robot-image robot-build /robot-image/build.py "$@"
+docker run --privileged -it -v $(dirname $(readlink -f "$0")):/robot-image robot-build /robot-image/build.py "$@"
