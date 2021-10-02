@@ -23,7 +23,7 @@ jobs:
         uses: docker/login-action@v1.10.0
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: srobo
           password: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Extract metadata
