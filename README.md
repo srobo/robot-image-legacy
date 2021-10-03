@@ -13,6 +13,20 @@ Scripts used to create a system image for SR brain board SD cards.
 | Raspberry Pi 3B/B+  | Supported |
 | Raspberry Pi 4B/400 | Supported |
 
+## Building in Docker
+
+If you're building on a non-Arch-based host system, you can try building an image inside of a Docker container.
+You will first need to make sure you either have qemu-user-static installed or use [multiarch/qemu-user-static](https://github.com/multiarch/qemu-user-static).
+Once that is all set up, run `./run-in-docker` with the same arguments you'd pass to the build script
+
+## Usage
+
+`# ./build.py {platform} {output}`
+
+Example of outputting to an SD card: `# ./build.py odroid /dev/sdc`
+
+Example of outputting to a file: `# ./build.py odroid odroid.img`
+
 ## Requirements
 
 - bash
