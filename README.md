@@ -1,3 +1,9 @@
+# ⚠️ This is no longer developed
+
+This project has been replaced by our [Yocto-based system image](https://github.com/search?q=topic%3Ayocto+org%3Asrobo+fork%3Atrue)
+
+This repository remains here to be used as reference.
+
 # SR Robot Base System
 
 [![Image Build](https://github.com/srobo/robot-base/actions/workflows/image.yml/badge.svg)](https://github.com/srobo/robot-base/actions/workflows/image.yml)
